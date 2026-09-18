@@ -1,29 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerControllerX : MonoBehaviour
 {
-    public float speed;
+    public float speed = 5.0f;
     public float rotationSpeed;
-    public float verticalInput;
+    public float pitchSpeed = 100.0f;
 
-    // Start is called before the first frame update
+    // Input system action exposed in Inspector for binding (WASD/Arrow keys)
+    public InputAction moveAction;
+
+    // Up/Down arrow keys
+    public InputAction pitchAction;
+
+    private Vector2 moveInput;
+    private float pitchInput;
+
     void Start()
     {
-
+        moveAction.Enable();
+        pitchAction.Enable();
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        // get the user's vertical input
-        verticalInput = Input.GetAxis("Vertical");
+        moveInput = moveAction.ReadValue<Vector2>();
+        pitchInput = pitchAction.ReadValue<float>();
 
-        // move the plane forward at a constant rate
-        transform.Translate(Vector3.back * speed);
-
-        // tilt the plane up/down based on up/down arrow keys
-        transform.Rotate(Vector3.right * rotationSpeed * Time.deltaTime);
+        transform.Translate(Vector3.forward * Time.deltaTime * speed * moveInput.y);
+        transform.Rotate(Vector3.right * Time.deltaTime * pitchSpeed * pitchInput);
     }
 }
